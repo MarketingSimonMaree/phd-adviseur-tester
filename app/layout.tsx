@@ -1,6 +1,6 @@
 import "@/styles/globals.css";
 import clsx from "clsx";
-import { Metadata, Viewport } from "next";
+import { Metadata } from "next";
 
 import { Providers } from "./providers";
 
@@ -27,11 +27,11 @@ export const metadata: Metadata = {
   },
 };
 
-export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "white" },
-    { media: "(prefers-color-scheme: dark)", color: "black" },
-  ],
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 export default function RootLayout({
