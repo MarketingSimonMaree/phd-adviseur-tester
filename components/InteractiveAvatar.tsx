@@ -85,10 +85,17 @@ export default function InteractiveAvatar({ children }: Props) {
       // Maak een nieuwe StreamingAvatar instantie met expliciete configuratie
       avatar.current = new StreamingAvatar({
         token: newToken,
-        container: mediaStream.current, // Voeg container direct toe
-        autoplay: true,                 // Zet autoplay aan
-        debug: true                     // Zet debug modus aan
+        autoplay: true,
+        debug: true
       });
+
+      // Mount eerst
+      if (mediaStream.current && avatar.current) {
+        avatar.current.mount(mediaStream.current);
+        
+        // Start de avatar
+        avatar.current.start();  // of .play() afhankelijk van de API
+      }
 
       // Event listeners toevoegen
       avatar.current.on(StreamingEvents.AVATAR_START_TALKING, (e) => {
@@ -283,6 +290,8 @@ export default function InteractiveAvatar({ children }: Props) {
       if (avatar.current) {
         avatar.current.off(StreamingEvents.AVATAR_TALKING_MESSAGE, handleTalkingMessage);
         avatar.current.off(StreamingEvents.AVATAR_END_MESSAGE, handleEndMessage);
+        avatar.current.stop();  // Stop de avatar bij cleanup
+        avatar.current = null;
       }
     };
   }, []);
