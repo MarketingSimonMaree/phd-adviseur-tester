@@ -85,16 +85,15 @@ export default function InteractiveAvatar({ children }: Props) {
       // Maak een nieuwe StreamingAvatar instantie met expliciete configuratie
       avatar.current = new StreamingAvatar({
         token: newToken,
-        autoplay: true,
         debug: true
       });
 
-      // Mount eerst
+      // Mount de avatar
       if (mediaStream.current && avatar.current) {
         avatar.current.mount(mediaStream.current);
         
-        // Start de avatar
-        avatar.current.start();  // of .play() afhankelijk van de API
+        // Start de avatar handmatig
+        avatar.current.start();
       }
 
       // Event listeners toevoegen
