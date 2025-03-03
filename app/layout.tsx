@@ -2,7 +2,7 @@ import "@/styles/globals.css";
 import clsx from "clsx";
 import { Metadata } from "next";
 
-import { Providers } from "./providers";
+import { Providers } from '@/app/providers'
 
 import { Fira_Code as FontMono, Inter as FontSans } from "next/font/google";
 import NavBar from "@/components/NavBar";
