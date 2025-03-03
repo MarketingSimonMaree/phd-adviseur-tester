@@ -8,7 +8,7 @@ import StreamingAvatar, {
   TaskType, 
   VoiceEmotion 
 } from "@heygen/streaming-avatar";
-import { connect } from "livekit-client";
+import { Room } from "livekit-client";
 import {
   Button,
   Card,
