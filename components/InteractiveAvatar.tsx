@@ -1,13 +1,7 @@
 "use client";
 
 import type { StartAvatarResponse } from "@heygen/streaming-avatar";
-import StreamingAvatar, { 
-  AvatarQuality, 
-  StreamingEvents, 
-  TaskMode, 
-  TaskType, 
-  VoiceEmotion 
-} from "@heygen/streaming-avatar";
+import { StreamingAvatar, StreamingEvents, TaskType, TaskMode } from '@heygen/streaming-avatar';
 import { connect } from "livekit-client";
 import {
   Button,
