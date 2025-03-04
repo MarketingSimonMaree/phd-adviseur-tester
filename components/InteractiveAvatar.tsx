@@ -51,6 +51,7 @@ export default function InteractiveAvatar({ children }: Props) {
   const [showInput, setShowInput] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
   const audioTrackRef = useRef<MediaStreamTrack | null>(null);
+  const [showToast, setShowToast] = useState(false);  // Voeg deze toe bovenaan bij de andere state
 
   async function fetchAccessToken() {
     try {
@@ -159,14 +160,14 @@ export default function InteractiveAvatar({ children }: Props) {
 
       // Start de avatar met de juiste configuratie
       const res = await avatar.current.createStartAvatar({
-        quality: 'high',
+        quality: AvatarQuality.High,
         avatarName: AVATAR_ID,
         knowledgeId: KNOWLEDGE_BASE_ID,
-        version: 'v2',
-        video_encoding: 'VP8',
         language: LANGUAGE,
-        disable_idle_timeout: true,
-        task_type: "chat"
+        disableIdleTimeout: true,
+        voice: {
+          voiceId: process.env.NEXT_PUBLIC_AVATAR_VOICE_ID
+        }
       });
 
       setData(res);
@@ -191,21 +192,33 @@ export default function InteractiveAvatar({ children }: Props) {
     }
   }
 
-  async function handleSpeak() {
-    setIsLoadingRepeat(true);
-    if (!avatar.current) {
-      setDebug("Avatar API not initialized");
-      return;
+  const handleSpeak = async (text: string) => {
+    try {
+      if (!avatar.current) {
+        throw new Error("Avatar is not initialized");
+      }
+
+      await avatar.current.speak({ 
+        text: text,
+        taskType: TaskType.TALK,
+        taskMode: TaskMode.SYNC 
+      });
+    } catch (e) {
+      // Optie 1: Type assertion
+      const error = e as Error;
+      setDebug(error.message);
+      console.error(error);
+
+      // OF Optie 2: Type check
+      if (e instanceof Error) {
+        setDebug(e.message);
+        console.error(e);
+      } else {
+        setDebug('An unknown error occurred');
+        console.error('Unknown error:', e);
+      }
     }
-    await avatar.current.speak({ 
-      text: text, 
-      taskType: TaskType.CHAT,
-      taskMode: TaskMode.SYNC 
-    }).catch((e) => {
-      setDebug(e.message);
-    });
-    setIsLoadingRepeat(false);
-  }
+  };
 
   async function endSession() {
     await avatar.current?.stopAvatar();
@@ -321,7 +334,7 @@ export default function InteractiveAvatar({ children }: Props) {
       try {
         await avatar.current.speak({ 
           text: userMessage, 
-          taskType: TaskType.CHAT,
+          taskType: TaskType.TALK,
           taskMode: TaskMode.SYNC 
         });
       } catch (e) {
@@ -575,6 +588,12 @@ export default function InteractiveAvatar({ children }: Props) {
         <br />
         {debug}
       </p>
+
+      {showToast && (
+        <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 bg-black/75 text-white px-4 py-2 rounded">
+          Start eerst de avatar om deze functie te gebruiken
+        </div>
+      )}
     </div>
   );
 }
